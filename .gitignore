@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Albany/Microblog.Data/obj
+/Albany/MicroblogService/.vs/MicroblogService
+/Albany/MicroblogService/bin/Debug/net8.0
+/Albany/MicroblogService/obj
+/Albany/Microblog.Data/bin/Debug/net8.0

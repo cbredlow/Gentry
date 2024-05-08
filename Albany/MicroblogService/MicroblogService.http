@@ -1,0 +1,6 @@
+@MicroblogService_HostAddress = http://localhost:5182
+
+GET {{MicroblogService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
