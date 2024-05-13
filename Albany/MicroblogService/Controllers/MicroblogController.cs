@@ -21,7 +21,7 @@ namespace MicroblogService.Controllers
         public IActionResult GetPosts() {
             try
             {
-                IList<IMicroblogPost> posts = this.microblogService.GetAllMicroblogPosts();
+                IList<IMicroblogPost> posts = this.microblogService.GetAllMicroblogPosts().Result;
                 return Ok(posts);
             }catch (Exception ex) { 
                 return NotFound("No posts found! Post something first!");
@@ -52,7 +52,7 @@ namespace MicroblogService.Controllers
             try
             {
                 var post = this.microblogService.GetMicroblogPost(id);
-                return Ok(post.PostString);
+                return Ok(post.Result.PostString);
 
             }catch(Exception ex)
             {

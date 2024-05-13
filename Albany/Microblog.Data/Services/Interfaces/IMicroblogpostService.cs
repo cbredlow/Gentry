@@ -14,16 +14,16 @@ namespace Microblog.Data.Services.Interfaces
         /// </summary>
         /// <param name="postData">string content of the post</param>
         /// <returns></returns>
-        int CreateMicroblogPost(string postData);
+        Task<int> CreateMicroblogPost(string postData);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        IMicroblogPost GetMicroblogPost(int id);
+        Task<IMicroblogPost> GetMicroblogPost(int id);
 
-        IList<IMicroblogPost> GetAllMicroblogPosts();
+        Task<IList<IMicroblogPost>> GetAllMicroblogPosts();
 
         void DeleteMicroblogPost(int id);
 

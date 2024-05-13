@@ -1,4 +1,5 @@
 ﻿using Microblog.Data.Models.Interfaces;
+using Microblog.Data.Repository.Interfaces;
 using Microblog.Data.Services.Interfaces;
 
 namespace Microblog.Data.Services
@@ -7,42 +8,65 @@ namespace Microblog.Data.Services
     {
 
         Dictionary<int, IMicroblogPost> posts;
+        IMicroblogpostRepository microblogpostRepository;
 
-        public MicroblogpostService()
+
+        public MicroblogpostService(IMicroblogpostRepository repository)
         {
             this.posts = new Dictionary<int, IMicroblogPost>();
+            this.microblogpostRepository = repository;
         }
 
 
-        public int CreateMicroblogPost(string postData)
+        public async Task<int> CreateMicroblogPost(string postData)
         {
-            int id = this.posts.Keys.Count+1; //get the next entry, prevents post 0 from happening
             var blogPost = new MicroblogPost
             {
-                Id = id,
+                Id = 0,
                 TimePosted = DateTime.Now,
                 PostString = postData
             };
 
+            int id = await this.microblogpostRepository.StoreMicroblogpost(blogPost).ConfigureAwait(false);
+
+            blogPost.Id = id;
             this.posts[id] = blogPost;
             return id;
 
         }
 
-        public IMicroblogPost GetMicroblogPost(int id)
+        public async Task<IMicroblogPost> GetMicroblogPost(int id)
         {
-            if(this.posts.ContainsKey(id))
-                return this.posts[id];
-            throw new Exception("No such post exists");
+            if(posts.ContainsKey(id))
+            {
+                return posts[id];
+            }
+
+            var post = await this.microblogpostRepository.GetMicroblogpost(id).ConfigureAwait(false);
+            if (post != null)
+            {
+                return post;
+            }
+            else
+            {
+                throw new Exception("No such post exists");
+            }
         }
 
-        public IList<IMicroblogPost> GetAllMicroblogPosts()
+        public async Task<IList<IMicroblogPost>> GetAllMicroblogPosts()
         {
-            if (posts.Count > 0)
+            try
             {
-                return posts.Values.ToList();
+                var postList = await this.microblogpostRepository.GetMicroblogposts().ConfigureAwait(false);
+                if( postList != null)
+                {
+                    return postList;
+                }
+                throw new Exception("No posts");
+            }catch (Exception ex)
+            {
+                throw new Exception("No posts to return");
             }
-            throw new Exception("No posts to return");
         }
 
         public void DeleteMicroblogPost(int id)
@@ -50,10 +74,14 @@ namespace Microblog.Data.Services
             if(posts.ContainsKey(id))
             {
                 posts.Remove(id);
-                return;
             }
-
-            throw new Exception("No such post exists");
+            try
+            {
+                this.microblogpostRepository.DeleteMicroblogpost(id);
+            }catch (Exception ex)
+            {
+                throw new Exception("No such post exists");
+            }
         }
     }
 }
